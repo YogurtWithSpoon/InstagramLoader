@@ -7,5 +7,5 @@
 
 #### Usage
 1. Putt all links in links.txt
-2. Run script
+2. Run script with command "node index.js"
 3. Get photos in images folder
