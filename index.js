@@ -34,7 +34,7 @@ function getUrlFromPost(url) {
     if (type == "GraphImage") {
       let url = response.data["graphql"]["shortcode_media"]["display_url"];
       let id = response.data["graphql"]["shortcode_media"]["id"];
-      urlArray.push([url,photoDate,id,username]);
+      urlArray.push([url,photoDate,id,userName]);
     }
     return urlArray;
   });
