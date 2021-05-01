@@ -1,11 +1,11 @@
 # InstagramLoader
 ##### Little script for download photos from list of instagram's posts
-> Requirements 
-- [node js](https://nodejs.org/en/ "node js")
-- [axios](https://github.com/axios/axios "axios") "-npm install axios"
+###### Instagram begin require auth for graph's ql requests
+> Instruction
+- Install [node js](https://nodejs.org/en/ "node js")
+- Instal node modules with "npm install i"
+- Pull your credits to login.txt file
+- Putt all links in links.txt
+- Run script with command "node index.js"
+- Get photos in images folder
 >
-
-#### Usage
-1. Putt all links in links.txt
-2. Run script with command "node index.js"
-3. Get photos in images folder

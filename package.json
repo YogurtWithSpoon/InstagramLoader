@@ -1,0 +1,23 @@
+{
+  "name": "instadownloader",
+  "version": "1.0.0",
+  "description": "> Requirements \r - [node js](https://nodejs.org/en/ \"node js\")\r - [axios](https://github.com/axios/axios \"axios\") \"-npm install axios\"\r >",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YogurtWithSpoon/InstagramLoader.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/YogurtWithSpoon/InstagramLoader/issues"
+  },
+  "homepage": "https://github.com/YogurtWithSpoon/InstagramLoader#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "puppeteer": "^9.0.0"
+  }
+}
