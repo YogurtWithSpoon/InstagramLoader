@@ -1,2 +1,2 @@
-test@test.com
-password
+your@mail.com
+yourpassword

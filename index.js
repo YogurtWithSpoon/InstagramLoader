@@ -13,14 +13,14 @@ function readLinkFromTxt() {
   }
 }
 
-async function getPostJSON(url,browser) {
+async function getPostJSON(url, browser) {
   try {
     let jsonPost = url + "?__a=1";
     const page = await browser.newPage();
     await page.goto(jsonPost);
     const content = await page.content();
-    let innerText = await page.evaluate(() =>  {
-      return JSON.parse(document.querySelector("body").innerText); 
+    let innerText = await page.evaluate(() => {
+      return JSON.parse(document.querySelector("body").innerText);
     });
     await page.close();
     return innerText;
@@ -29,14 +29,14 @@ async function getPostJSON(url,browser) {
   }
 }
 
-async function logIn(browser){
+async function logIn(browser) {
   try {
-    const [login,password] = fs.readFileSync("login.txt", "utf-8").split(/\r?\n/);
+    const [login, password] = fs.readFileSync("login.txt", "utf-8").split(/\r?\n/);
     const page = await browser.newPage();
     await page.goto('https://www.instagram.com/accounts/login/');
     await page.waitFor('input[name=username]');
-    await page.type('input[name=username]',login,{delay: 100})
-    await page.type('input[name=password]',password,{delay: 100})
+    await page.type('input[name=username]', login, { delay: 100 })
+    await page.type('input[name=password]', password, { delay: 100 })
     await page.click('button[type="submit"]');
     await page.waitForTimeout(5000);
     await page.close();
@@ -45,41 +45,36 @@ async function logIn(browser){
   }
 }
 
-async function getUrlFromPost(url,browser) {
-  const response = {}
+async function getUrlFromPost(url, browser) {
   try {
-    response.data = await getPostJSON(url,browser);
+    const data = await getPostJSON(url, browser);
+    const mainData = data.items[0]
+    let urlArray = [];
+    console.log(url)
+    let type = mainData.carousel_media_count ? 'carousel' : 'single'
+    let userName = mainData.user.username
+    let rawData = new Date(Number(mainData.taken_at) * 1000);
+    let photoDate = `${rawData.getFullYear()}-${String(
+      rawData.getMonth() + 1
+    ).padStart(2, "0")}-${String(rawData.getDate()).padStart(2, "0")}`;
+
+    if (type == "carousel") {
+      let nodeArray = mainData.carousel_media
+      for (node of nodeArray) {
+        let url = node.image_versions2.candidates[0].url
+        let id = node.id
+        urlArray.push([url, photoDate, id, userName]);
+      }
+    }
+    if (type == "single") {
+      let url = mainData.image_versions2.candidates[0].url
+      let id = mainData.id
+      urlArray.push([url, photoDate, id, userName]);
+    }
+    return urlArray;
   } catch (error) {
     console.log(error)
   }
-  let urlArray = [];
-  let type = response.data["graphql"]["shortcode_media"]["__typename"];
-  let userName =
-    response.data["graphql"]["shortcode_media"]["owner"]["username"];
-  let rawData = new Date(
-    Number(response.data["graphql"]["shortcode_media"]["taken_at_timestamp"]) *
-      1000
-  );
-  let photoDate = `${rawData.getFullYear()}-${String(
-    rawData.getMonth() + 1
-  ).padStart(2, "0")}-${String(rawData.getDate()).padStart(2, "0")}`;
-  if (type == "GraphSidecar") {
-    let nodeArray =
-      response.data["graphql"]["shortcode_media"]["edge_sidecar_to_children"][
-        "edges"
-      ];
-    for (node of nodeArray) {
-      let url = node["node"]["display_url"];
-      let id = node["node"]["id"];
-      urlArray.push([url, photoDate, id, userName]);
-    }
-  }
-  if (type == "GraphImage") {
-    let url = response.data["graphql"]["shortcode_media"]["display_url"];
-    let id = response.data["graphql"]["shortcode_media"]["id"];
-    urlArray.push([url, photoDate, id, userName]);
-  }
-  return urlArray;
 }
 
 async function downloadImage(array) {
@@ -105,11 +100,11 @@ async function downloadImage(array) {
 }
 
 async function start() {
-  const browser = await puppeteer.launch({headless:false});
+  const browser = await puppeteer.launch({ headless: false });
   let links = readLinkFromTxt();
   await logIn(browser);
   for (link of links) {
-    const urlsArray = await getUrlFromPost(link,browser)
+    const urlsArray = await getUrlFromPost(link, browser)
     urlsArray.forEach((array) => downloadImage(array));
   }
   await browser.close();
