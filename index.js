@@ -15,7 +15,7 @@ function readLinkFromTxt() {
 
 async function getPostJSON(url, browser) {
   try {
-    let jsonPost = url + "?__a=1";
+    let jsonPost = url + "?__a=1&__d=dis";
     const page = await browser.newPage();
     await page.goto(jsonPost);
     const content = await page.content();
