@@ -18,6 +18,7 @@ async function getPostJSON(url, browser) {
     let jsonPost = url + "?__a=1&__d=dis";
     const page = await browser.newPage();
     await page.goto(jsonPost);
+    await page.waitForTimeout(3000);
     const content = await page.content();
     let innerText = await page.evaluate(() => {
       return JSON.parse(document.querySelector("body").innerText);
@@ -33,7 +34,7 @@ async function logIn(browser) {
   try {
     const [login, password] = fs.readFileSync("login.txt", "utf-8").split(/\r?\n/);
     const page = await browser.newPage();
-    await page.goto('https://www.instagram.com/accounts/login/');
+    await page.goto('https://www.instagram.com');
     await page.waitFor('input[name=username]');
     await page.type('input[name=username]', login, { delay: 100 })
     await page.type('input[name=password]', password, { delay: 100 })
@@ -50,7 +51,7 @@ async function getUrlFromPost(url, browser) {
     const data = await getPostJSON(url, browser);
     const mainData = data.items[0]
     let urlArray = [];
-    console.log(url)
+    console.log(url);
     let type = mainData.carousel_media_count ? 'carousel' : 'single'
     let userName = mainData.user.username
     let rawData = new Date(Number(mainData.taken_at) * 1000);
@@ -103,7 +104,7 @@ async function start() {
   const browser = await puppeteer.launch({ headless: false });
   let links = readLinkFromTxt();
   await logIn(browser);
-  for (link of links) {
+  for (let link of links) {
     const urlsArray = await getUrlFromPost(link, browser)
     urlsArray.forEach((array) => downloadImage(array));
   }
